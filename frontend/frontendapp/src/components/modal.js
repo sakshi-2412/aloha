@@ -57,7 +57,7 @@ function ModalScreen(props) {
                     Bye! See you later
                     <br/>
                         Date : {props.date} <br/>
-                        Check-Out Time : {props.checkIn} <br/>
+                        Check-Out Time : {props.checkOut} <br/>
                         Attendance for today : {props.sumDay}%
                     </div>
                 </Modal.Body>
