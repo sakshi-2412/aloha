@@ -1,3 +1,5 @@
+// Introductory page for app
+
 import React from 'react'
 import { PersonCheck, CardChecklist, BarChartLine } from 'react-bootstrap-icons';
 
@@ -42,7 +44,7 @@ export default function Home() {
             <b>PROFILE</b>
           </h5>
           <p>
-            Login to see your profile with attendance status for the past week
+            Login to see your profile with attendance status for the last 6 days
           </p>
         </div>
 

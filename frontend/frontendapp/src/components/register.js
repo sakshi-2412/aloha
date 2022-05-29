@@ -1,12 +1,15 @@
+// Registration form
+
 import React, { useState, useEffect } from 'react'
 import { useAuth } from './auth'
 import notif from '../components/notif';
 import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
-  const { token, setToken } = useAuth()
+  const { token, setToken } = useAuth() // get parameters for logged-in user
 
   useEffect(() => {
+    // if user is already logged-in, redirect to user profile
     if(token){   
         navigate("/profile");
     }
@@ -14,14 +17,16 @@ export default function Register() {
 
   const navigate = useNavigate();
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passConf, setPassConf] = useState('');
-  const [username, setUsername] = useState('');
-  const [photo1, setPhoto1 ] = useState();
-  const [photo2, setPhoto2 ] = useState();
+  const [name, setName] = useState(''); // form name
+  const [email, setEmail] = useState(''); // form email
+  const [password, setPassword] = useState(''); // form password
+  const [passConf, setPassConf] = useState(''); // form confirm password 
+  const [username, setUsername] = useState(''); // form username
+  const [photo1, setPhoto1 ] = useState(); // form photo number 1
+  const [photo2, setPhoto2 ] = useState(); // form photo number 2
 
+
+  // check if form fields are valid
   const validateFields = () => {
     if(name === '' || email === '' || username === '' || password === '') 
     {
@@ -60,6 +65,8 @@ export default function Register() {
     uploadData.append('photo1', photo1, photo1.name);
     uploadData.append('photo2', photo2, photo2.name);
 
+
+    // put register request with form data
     fetch('http://127.0.0.1:8000/auth/register/', {
       method: 'POST',
       body: uploadData,

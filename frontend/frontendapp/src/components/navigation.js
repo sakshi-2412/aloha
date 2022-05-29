@@ -1,3 +1,5 @@
+// Sidebar navigation panel
+
 import React from 'react';
 import { useAuth } from './auth';
 import { NavLink } from 'react-router-dom';
@@ -5,9 +7,9 @@ import { ProSidebar, Menu, MenuItem, SidebarHeader, SidebarFooter, SidebarConten
 import 'react-pro-sidebar/dist/css/styles.css';
 
 const Navigation = () => {
-   const {token, logout, username} = useAuth()
+   const {token, logout, username} = useAuth() // get parameters for logged-in user
 
-   let check = false
+   let check = false // check if there exists a logged-in user
    if(token){
       check=true
    }

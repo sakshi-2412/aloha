@@ -1,3 +1,5 @@
+// Piechart 1 for user profile page showing numeric attendance for last 6 days
+
 import React, { useState, useEffect } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
@@ -6,10 +8,12 @@ ChartJS.register(ArcElement, Title, Tooltip, Legend);
 
 export function PieChart1(props) {
 
-    const [suma, setSuma] = useState('')
-    const [sump, setSump] = useState('')
+    const [suma, setSuma] = useState('') // total days (out of 6) when user was absent
+    const [sump, setSump] = useState('') // total days (out of 6) when user was present
 
     useEffect(() => {
+        
+        // fetch attendance data of logged-in user for past week
         if(props.username) {
         fetch('http://127.0.0.1:8000/api/attend/chart/', {
             method: 'POST',
@@ -22,10 +26,10 @@ export function PieChart1(props) {
               let sp = 0
               let sa = 0
               data.datetwo.forEach(function (item, i) {
-                if(item<=70) 
+                if(item<=70) // 70% or less attendance is marked absent
                 { sa = sa + 1;}
                 else
-                { sp = sp + 1;}
+                { sp = sp + 1;} // 70% or more attendance - present
               });
               setSuma(sa)
               setSump(sp)
@@ -40,7 +44,7 @@ export function PieChart1(props) {
         labels: ['Present', 'Absent'],
         datasets: [
           {
-            label: '# of Votes',
+            label: 'Attendance',
             data: [sump, suma],
             backgroundColor: [
               'rgba(255, 99, 132, 0.2)',
@@ -56,7 +60,7 @@ export function PieChart1(props) {
         plugins: {
           title: {
             display: true,
-            text: 'Numeric Attendance for past week',
+            text: 'Numeric Attendance for last 6 days',
           },
         },
       };

@@ -1,3 +1,5 @@
+// Profile page for logged-in user showing attendance statistics
+
 import React, { useEffect } from 'react';
 import { useAuth } from './auth';
 import { useNavigate } from 'react-router-dom';
@@ -7,16 +9,17 @@ import { PieChart2 } from './piechart2';
 
 function Profile() {
 
-    const {token, profileName, avatarImage, banned, email, username } = useAuth()
+    const {token, profileName, avatarImage, banned, email, username } = useAuth() // get parameters for logged-in user
     const navigate = useNavigate();
 
     useEffect(() => {
+        // if user is not logged-in, redirect to login page
         if(!token){   
             navigate("/login");
         }
     }, [token])
 
-    const rest = {banned}
+    const rest = {banned} // to display if user is restricted or not
 
     return (
         <>

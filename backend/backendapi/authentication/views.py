@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 from .serializers import *
 from django.contrib.auth.models import User
 
-
+# create or get token for user
 def auth_token(user):
     token, _ = Token.objects.get_or_create(user=user)
     return token
@@ -43,7 +43,7 @@ class RegisterView(generics.GenericAPIView):
         
 
 class UserProfileView(generics.RetrieveAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated,) # token authentication required
     queryset = User.objects.all()
     serializer_class = UserSerializer
 

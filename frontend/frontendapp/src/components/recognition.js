@@ -1,3 +1,5 @@
+// Face-Recognition for attendance
+
 import * as faceapi from 'face-api.js';
 import React from 'react';
 import { CameraVideo, CameraVideoOff } from 'react-bootstrap-icons';
@@ -7,6 +9,7 @@ function Recognition() {
 
   const labels = getUsers()
   
+  // store details of recognised user
   const [label, setLabel] = React.useState('');
   const [present, setPresent] = React.useState('');
   const [date, setDate] = React.useState('');
@@ -15,15 +18,17 @@ function Recognition() {
   const [sumDay, setSumDay] = React.useState('');
   const [banned, setBanned] = React.useState(false);
   
-  const [modelsLoaded, setModelsLoaded] = React.useState(false);
-  const [captureVideo, setCaptureVideo] = React.useState(false);
-  const [modalShow, setModalShow] = React.useState(false);
+  const [modelsLoaded, setModelsLoaded] = React.useState(false); // true for models loaded
+  const [captureVideo, setCaptureVideo] = React.useState(false); // true for video on
+  const [modalShow, setModalShow] = React.useState(false); // true for showing modal after recognition
 
   const videoRef = React.useRef();
   const videoHeight = 480;
   const videoWidth = 640;
   const canvasRef = React.useRef();
 
+
+  // get all registered usernames for labels array
   function getUsers() {
     var array = []
     fetch('http://127.0.0.1:8000/api/users', {
@@ -44,6 +49,7 @@ function Recognition() {
 
   React.useEffect(() => {
 
+    // load face-recognition models from public models folder
     const loadModels = async () => {
       const MODEL_URL = process.env.PUBLIC_URL + '/models';
 
@@ -58,6 +64,7 @@ function Recognition() {
 
   }, []);
 
+  // play video when camera button clicked
   const startVideo = () => {
     setCaptureVideo(true);
     navigator.mediaDevices
@@ -73,15 +80,16 @@ function Recognition() {
 
   }
 
+  // detect faces in live video
   const handleVideoOnPlay = () => {
     setModalShow(false);
 
     setInterval(async () => {
-      const labeledFaceDescriptors = await loadLabeledImages()
+      const labeledFaceDescriptors = await loadLabeledImages() // load labeled photos from backend
       const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6)
 
       if (canvasRef && canvasRef.current) {
-        canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
+        canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current); // create canvas for detection box
         const displaySize = {
           width: videoWidth,
           height: videoHeight
@@ -89,27 +97,30 @@ function Recognition() {
 
         faceapi.matchDimensions(canvasRef.current, displaySize);
 
+        // for current video instance, detect faces
         const detections = await faceapi.detectAllFaces(videoRef.current).withFaceLandmarks().withFaceDescriptors();
-
         const resizedDetections = faceapi.resizeResults(detections, displaySize);
         const results = resizedDetections.map(d => faceMatcher.findBestMatch(d.descriptor))
 
         canvasRef && canvasRef.current && canvasRef.current.getContext('2d').clearRect(0, 0, videoWidth, videoHeight);
+
+        // for each recognised face, draw box with result label and display on canvas video
         results.forEach((result, i) => {
           const box = resizedDetections[i].detection.box
           const drawBox = new faceapi.draw.DrawBox(box, { label: result.toString() })
           drawBox.draw(canvasRef.current)
           
-          checkLabel(result.label)
+          checkLabel(result.label) // check if recognised user is a registered user
 
         })
       }
-    }, 3000)
+    }, 3000) // video instance changes for every 3 seconds
   }
 
   function checkLabel( result) {
     const isThere = labels.includes(result)
 
+    // if result label is in labels array, close video and mark attendance for the user
     if (isThere === true) {
       
         closeWebcam();
@@ -141,7 +152,8 @@ function Recognition() {
 
     }
   }
-
+  
+  // fetch django-backend hosted user photos for each user in labels array
   function loadLabeledImages() {
     return Promise.all(
       
@@ -158,6 +170,7 @@ function Recognition() {
     )
   }
 
+  // stop video streaming
   const closeWebcam = () => {
     videoRef.current.pause();
     videoRef.current.srcObject.getTracks()[0].stop();

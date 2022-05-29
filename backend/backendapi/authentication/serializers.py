@@ -12,6 +12,7 @@ class LoginSerializer(serializers.Serializer):
 
     def save(self,data):
         user = authenticate(username=data['username'], password=data['password'])
+        # check if user exists for passed-in login credentials
         if(not user):
             raise serializers.ValidationError({'Error': 'Password or username is incorrect'})
         else:
@@ -28,8 +29,12 @@ class RegisterSerializer(serializers.Serializer):
         fields = ( 'username', 'password', 'photo1', 'first_name', 'email')
     
     def save(self, data):
+
+        # check if user with passed-in username already exists
         if(User.objects.filter(username=data['username']).exists()):
             raise serializers.ValidationError({'Error': 'Username already exists'})
+
+        # else create user and profile instance for passed-in details
         else:
             user = User.objects.create_user(
                 username = data['username'],
@@ -41,6 +46,7 @@ class RegisterSerializer(serializers.Serializer):
             return user
 
 
+# for fetching user details with token
 class UserSerializer(serializers.ModelSerializer):
 
     banned = serializers.BooleanField(source='profile.banned')

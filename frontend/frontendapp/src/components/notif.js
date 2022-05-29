@@ -1,3 +1,5 @@
+// Notifications (success, error) for app
+
 import { Store } from 'react-notifications-component';
 import 'animate.css/animate.min.css';
 

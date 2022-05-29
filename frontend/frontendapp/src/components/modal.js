@@ -1,13 +1,16 @@
+// Modal pop-up for attendance after face-recognition
+
 import React, { useState } from 'react';
 import { Button, Modal} from 'react-bootstrap'; 
 import { ExclamationCircle, BoxArrowInDownRight, BoxArrowUpRight } from 'react-bootstrap-icons';
 
 function ModalScreen(props) {
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(true); // true for showing modal, false for closing
   
     const handleClose = () => setShow(false);
-    const present = props.present
-    const banned = props.banned
+
+    const present = props.present // true for check-in, false for check-out
+    const banned = props.banned // true for restricted users
   
     return (
       <>

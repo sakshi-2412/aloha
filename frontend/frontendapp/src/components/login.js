@@ -1,16 +1,19 @@
+// Login form
+
 import React, { useState, useEffect } from 'react'
 import { useAuth } from './auth'
 import { useNavigate } from 'react-router-dom';
 import notif from '../components/notif';
 
 export default function Login(props) {
-  const { token, setToken } = useAuth()
+  const { token, setToken } = useAuth() // get parameters for logged-in user
   const navigate = useNavigate();
 
-  const [password, setPassword] = useState('')
-  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('') // form password
+  const [username, setUsername] = useState('') // form username
 
   useEffect(() => {
+    // if user is already logged-in, redirect to user profile
     if(token){   
         navigate("/profile");
     }
@@ -18,7 +21,8 @@ export default function Login(props) {
 
   const login = (e) => {
     e.preventDefault()
- 
+    
+    // put login request with form data
     fetch('http://127.0.0.1:8000/auth/login/', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -27,9 +31,16 @@ export default function Login(props) {
       .then( data => data.json())
       .then(
         data => {
-          setToken(data.token);
-          notif('Success','Login successful...','info')
-          navigate("/profile");
+          if(data.token == undefined)
+          {
+            notif('Error','Incorrect username or password','danger')
+            navigate("/login");
+          }
+          else{
+            setToken(data.token); // set token in cookies
+            notif('Success','Login successful...','info')
+            navigate("/profile");
+          }
         }
       )
       .catch( error => console.error(error))
@@ -77,7 +88,7 @@ export default function Login(props) {
         <style jsx>{`
         .wrapper {
           background-color: white;
-          margin: 20vh auto;
+          margin: 70px auto;
           max-width: 600px;
           box-shadow: rgba(0, 0, 0, 0.24) 0px 1px 8px;
           border-radius: 10px;
